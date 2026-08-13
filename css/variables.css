@@ -1,0 +1,57 @@
+/* AI DIGITAL STUDIO DESIGN SYSTEM TOKENS */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Deep Charcoal & Near-Black Palette */
+  --bg-dark: #06080C;
+  --bg-darker: #030407;
+  --bg-surface: #0A0D14;
+  --bg-card: rgba(15, 19, 30, 0.65);
+  --bg-card-hover: rgba(22, 28, 44, 0.75);
+  --bg-glass: rgba(12, 16, 26, 0.6);
+  
+  /* Refined Accents */
+  --accent-cyan: #00F0FF;
+  --accent-ice: #38BDF8;
+  --accent-violet: #8B5CF6;
+  --accent-cyan-glow: rgba(0, 240, 255, 0.15);
+  --accent-violet-glow: rgba(139, 92, 246, 0.15);
+  
+  /* Gradients */
+  --gradient-accent: linear-gradient(135deg, #00F0FF 0%, #38BDF8 50%, #8B5CF6 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --gradient-ambient: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.08) 0%, rgba(139, 92, 246, 0.04) 50%, transparent 80%);
+
+  /* Text Colors */
+  --text-bright: #FFFFFF;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --text-dark: #64748B;
+  
+  /* Borders & Shadows */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+  --border-cyan: rgba(0, 240, 255, 0.25);
+  --border-violet: rgba(139, 92, 246, 0.25);
+  --glass-blur: blur(20px);
+  
+  /* Soft Depth Shadows */
+  --shadow-soft: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+  --glow-soft: 0 0 40px rgba(0, 240, 255, 0.12);
+
+  /* Typography */
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing & Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
