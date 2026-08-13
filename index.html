@@ -1309,6 +1309,45 @@
             transition: opacity 0.8s var(--ease-out);
         }
 
+        /* Loading indicator for live preview */
+        .browser__loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(12, 12, 16, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s var(--ease-out);
+        }
+
+        .browser__loading.is-active {
+            opacity: 1;
+        }
+
+        .browser__spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--cyan);
+            border-radius: 50%;
+            margin-bottom: 0.8rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* Placeholder if both iframe & image fail */
         .browser__placeholder {
             position: absolute;
@@ -2093,7 +2132,7 @@
                                 <span>Portfolio</span>
                             </div>
                             <!-- Fallback screenshot -->
-                            <img src="assets/portfolio-preview.png"
+                            <img src="assets/project_ai_nexus.svg"
                                  alt="Screenshot of Pruthviraj Kale's portfolio website"
                                  class="browser__fallback"
                                  id="browser-fallback">
@@ -2367,21 +2406,89 @@
         const browserIframe = document.getElementById('browser-iframe');
         const browserFallback = document.getElementById('browser-fallback');
         const browserMockup = document.getElementById('browser-mockup');
+        const browserLoading = document.getElementById('browser-loading');
+        const browserHoverOverlay = document.querySelector('.browser__hover-overlay');
 
         if (browserIframe && browserMockup) {
-            const loadIframe = () => {
+            let isLoaded = false;
+            let isLoading = false;
+            let preloaded = false;
+
+            const triggerLoad = (isExplicitClick = false) => {
+                if (isLoaded || (isLoading && !isExplicitClick)) return;
+
+                // Only show visual loading indicator if explicitly clicked
+                if (isExplicitClick && !isLoaded) {
+                    if (browserLoading) browserLoading.classList.add('is-active');
+                    isLoading = true;
+                }
+
                 if (!browserIframe.src && browserIframe.dataset.src) {
                     browserIframe.src = browserIframe.dataset.src;
+                    
+                    // Fallback timeout in case iframe fails completely or blocks embedding
+                    const loadTimeout = setTimeout(() => {
+                        if (!isLoaded) {
+                            isLoading = false;
+                            if (browserLoading) browserLoading.classList.remove('is-active');
+                            if (browserHoverOverlay) {
+                                browserHoverOverlay.innerHTML = '<span>OPEN LIVE PREVIEW</span>';
+                            }
+                        }
+                    }, 8000);
+
                     browserIframe.addEventListener('load', () => {
+                        clearTimeout(loadTimeout);
+                        isLoaded = true;
+                        isLoading = false;
+                        if (browserLoading) browserLoading.classList.remove('is-active');
                         browserIframe.style.opacity = '1';
-                        // Keep fallback underneath just in case, but fade it out
+                        // Fade out fallback image
                         if (browserFallback) browserFallback.style.opacity = '0';
+                    }, { once: true });
+                    
+                    browserIframe.addEventListener('error', () => {
+                        clearTimeout(loadTimeout);
+                        isLoading = false;
+                        if (browserLoading) browserLoading.classList.remove('is-active');
+                        if (browserHoverOverlay) {
+                            browserHoverOverlay.innerHTML = '<span>OPEN LIVE PREVIEW</span>';
+                        }
                     }, { once: true });
                 }
             };
 
-            browserMockup.addEventListener('mouseenter', loadIframe, { once: true });
-            browserMockup.addEventListener('touchstart', loadIframe, { once: true, passive: true });
+            // Preload optionally on hover (desktop only)
+            browserMockup.addEventListener('mouseenter', () => {
+                if (!preloaded) {
+                    preloaded = true;
+                    // Don't show loading indicator on just hover preload
+                    triggerLoad(false);
+                }
+            }, { once: true });
+
+            // Explicit load on click/tap/enter
+            const handleInteract = (e) => {
+                // If it's already loaded, let the click pass through to the overlay/link
+                if (!isLoaded) {
+                    e.preventDefault(); 
+                    triggerLoad(true);
+                }
+            };
+
+            browserMockup.addEventListener('click', handleInteract);
+            
+            // Keyboard accessibility
+            browserMockup.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (!isLoaded) {
+                        triggerLoad(true);
+                    } else if (browserHoverOverlay && browserHoverOverlay.href) {
+                        window.open(browserHoverOverlay.href, '_blank', 'noopener,noreferrer');
+                    }
+                }
+            });
         }
 
         // 7. Browser mockup — 3D tilt + dynamic shadow on desktop
